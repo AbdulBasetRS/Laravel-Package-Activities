@@ -40,7 +40,7 @@ trait ActivityLoggable
         if (auth()->check()) {
             $output = auth()->id();
         } else {
-            $output = null;
+
         }
         return $output;
     }

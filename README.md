@@ -47,7 +47,6 @@ class YourModel extends Model
 
 ## configuration
 - when you publish the ActivityConfig you will have the config file in /config path and you can customize the package from array like...
-
 ```php
 return [
     'crud_operation' => [
@@ -70,6 +69,10 @@ return [
         // 'updated_at', 
     ]
 ];
+```
+- note for after modify the config file you must run the following command:
+```bash
+php artisan optimize
 ```
 
 ## Screenshots

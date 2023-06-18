@@ -1,0 +1,31 @@
+{
+    "name": "abdulbaset/laravel-package-activities",
+    "description": "the activities package is save all action logs at database.",
+    "type": "library",
+    "license": "MIT",
+    "version": "0.0.1",
+    "authors": [
+        {
+            "name": "Abdulbaset R. Sayed",
+            "email": "AbdulbasetRedaSayedHF@Gmail.com"
+        }
+    ],
+    "homepage": "https://digitalatum.com",
+    "autoload": {
+        "psr-4": {
+            "Abdulbaset\\Activities\\": "src/"
+        }
+    },
+    "keywords": [
+        "php",
+        "laravel",
+        "package"
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Abdulbaset\\Activities\\Providers\\ActivitiesServiceProvider"
+            ]
+        }
+    }
+}

@@ -45,7 +45,7 @@ class YourModel extends Model
 }
 ```
 
-## configuration
+## Configuration
 - when you publish the ActivityConfig you will have the config file in /config path and you can customize the package from array like...
 ```php
 return [

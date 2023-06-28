@@ -10,13 +10,13 @@
 ```bash
 composer require abdulbaset/laravel-package-activities
 ```
-3. To run the table, run the following command:
-```bash
-php artisan migrate
-```
 3. To run the Config, run the following command:
 ```bash
 php artisan vendor:publish --tag=ActivityConfig
+```
+4. To run the table, run the following command:
+```bash
+php artisan migrate
 ```
 <!-- 4. To run the command for delete older activities, run the following command:
 ```bash

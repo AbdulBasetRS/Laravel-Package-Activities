@@ -18,6 +18,10 @@ php artisan migrate
 ```bash
 php artisan vendor:publish --tag=ActivityConfig
 ```
+4. To run the command for delete older activities, run the following command:
+```bash
+php artisan delete-older-activities
+```
 
 ## Usage
 - just include the name speace in your model.

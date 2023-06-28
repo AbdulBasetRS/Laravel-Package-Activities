@@ -8,8 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class ActivityLog extends Model
 {
     use HasFactory;
-    
-    protected $table = 'activities';
+
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $this->table = config('ActivityConfig.table_name');
+    }
 
     protected $fillable = [
         'event',

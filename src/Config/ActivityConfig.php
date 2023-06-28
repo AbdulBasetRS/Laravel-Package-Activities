@@ -1,5 +1,10 @@
 <?php
 return [
+    'activity_enabled' => env('ACTIVITY_ENABLED', true),
+    'table_name' => 'activities',
+    'submit_empty_logs' => true,
+    'log_only_changes' => true,
+    'delete_records_older_than_days' => 365,
     'crud_operation' => [
         'create' => true,
         'read' => true,
@@ -21,5 +26,5 @@ return [
         // 'deleted_at',
         // 'password',
         // 'other',
-    ]
+    ],
 ];

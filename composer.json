@@ -1,9 +1,9 @@
 {
     "name": "abdulbaset/laravel-package-activities",
-    "description": "the activities package is save all action logs at database.",
+    "description": "The Laravel Package Activities provides a simple and flexible way to log user activities in your Laravel application. With this package, you can track user actions such as creating, reading, updating, and deleting records.",
     "type": "library",
     "license": "MIT",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "authors": [
         {
             "name": "Abdulbaset R. Sayed",
@@ -14,7 +14,10 @@
     "autoload": {
         "psr-4": {
             "Abdulbaset\\Activities\\": "src/"
-        }
+        },
+        "files": [
+            "src/Helpers/ActivityHelper.php"
+        ]
     },
     "keywords": [
         "php",

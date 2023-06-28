@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('activities', function (Blueprint $table) {
+        Schema::create(config('ActivityConfig.table_name'), function (Blueprint $table) {
             $table->id();
             $table->string('event')->nullable();
             $table->integer('user_id')->nullable();
@@ -33,6 +33,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('activities');
+        Schema::dropIfExists(config('ActivityConfig.table_name'));
     }
 };

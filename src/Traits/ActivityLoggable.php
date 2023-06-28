@@ -3,7 +3,6 @@
 namespace Abdulbaset\Activities\Traits;
 
 use Abdulbaset\Activities\Models\ActivityLog;
-// use Illuminate\Http\Request;
 use Carbon\Carbon;
 
 trait ActivityLoggable
@@ -25,8 +24,10 @@ trait ActivityLoggable
         'device_type' => true ,
         'operating_system'=> true 
     ];
-    
+
     protected static $exclude = [];
+
+    protected static $description = null;
 
     public static function setExclude(array $exclude){
         self::$exclude = $exclude;
@@ -34,6 +35,14 @@ trait ActivityLoggable
 
     public static function getExclude(){
         return array_merge(self::$exclude , config('ActivityConfig.exclude_column'));
+    }
+
+    public static function setDescriptionForActivity($description){
+        self::$description = $description;
+    }
+
+    private static function getDescription(){
+        return self::$description;
     }
 
     protected static function getUserId(){
@@ -257,123 +266,113 @@ trait ActivityLoggable
         return $data;
     }
 
+    private static function getEnabled() {
+        return config('ActivityConfig.activity_enabled');
+    }
+
+    private static function submit_empty_logs() {
+        return config('ActivityConfig.submit_empty_logs');
+    }
+
+    private static function log_only_changes() {
+        return config('ActivityConfig.log_only_changes');
+    }
+
     public static function bootActivityLoggable(){
         static::created(function ($model) {
+       
             if (self::isAllowedCRUD('create') == false) {
                 return ;
             }
             $new = self::exclude(self::format($model->getAttributes(),$model->getDates()));
+
             if ($new == null) {
-                return ;
+                if (self::submit_empty_logs() === false) {
+                    return ;
+                }
             }
-            $activity = new ActivityLog([
-                'event' => 'create',
-                'user_id' => self::getUserId(),
-                'model' => get_class($model),
-                'model_id' => $model->id,
-                'old' => null,
-                'new' => json_encode($new),
-                'ip' => self::getIp(),
-                'browser' => self::getBrowser(),
-                'browser_version' => self::getBrowserVersion(),
-                'referring_url' => self::getReferringURL(),
-                'current_url' => self::getCurrentURL(),
-                'device_type' => self::getDeviceType(),
-                'operating_system' => self::getOperatingSystem(),
-                'description' => null,
-            ]);
-            $model->activities()->save($activity);
+            self::logActivity('create',$model,$oldValue = null, $newValue = $new);
         });
 
         static::updated(function ($model) {
+      
             if (self::isAllowedCRUD('update') == false) {
                 return ;
             }
             $original = self::exclude(self::format($model->getOriginal(),$model->getDates()));
             $updated = self::exclude(self::format($model->getAttributes(),$model->getDates()));
-            $new = self::customArrayDiff($updated, $original);
-            $old = self::customArrayDiff($original, $updated);
-            if ($new == null AND $old == null) {
-                return ;
+
+            if (self::log_only_changes() === true) {
+                $new = self::customArrayDiff($updated, $original);
+                $old = self::customArrayDiff($original, $updated);
+            }else {
+                $new = $updated;
+                $old = $original;
             }
-            $activity = new ActivityLog([
-                'event' => 'update',
-                'user_id' => self::getUserId(),
-                'model' => get_class($model),
-                'model_id' => $model->id,
-                'old' => json_encode($old),
-                'new' => json_encode($new),
-                'ip' => self::getIp(),
-                'browser' => self::getBrowser(),
-                'browser_version' => self::getBrowserVersion(),
-                'referring_url' => self::getReferringURL(),
-                'current_url' => self::getCurrentURL(),
-                'device_type' => self::getDeviceType(),
-                'operating_system' => self::getOperatingSystem(),
-                'description' => null,
-            ]);
-            $model->activities()->save($activity);
+           
+            if ($new == null AND $old == null) {
+                if (self::submit_empty_logs() === false) {
+                    return ;
+                }
+            }
+
+            self::logActivity('update',$model,$oldValue = $old, $newValue = $new);
+
         });
 
         static::deleted(function ($model) {
+      
             if (self::isAllowedCRUD('delete') == false) {
                 return ;
             }
             $old = self::exclude(self::format($model->getOriginal(),$model->getDates()));
             if ($old == null) {
-                return ;
+                if (self::submit_empty_logs() === false) {
+                    return ;
+                }
             }
-            $activity = new ActivityLog([
-                'event' => 'delete',
-                'user_id' => self::getUserId(),
-                'model' => get_class($model),
-                'model_id' => $model->id,
-                'old' => json_encode($old),
-                'new' => null,
-                'ip' => self::getIp(),
-                'browser' => self::getBrowser(),
-                'browser_version' => self::getBrowserVersion(),
-                'referring_url' => self::getReferringURL(),
-                'current_url' => self::getCurrentURL(),
-                'device_type' => self::getDeviceType(),
-                'operating_system' => self::getOperatingSystem(),
-                'description' => null,
-            ]);
-            $model->activities()->save($activity);
+            self::logActivity('delete',$model,$oldValue = $old, $new = null);
+
         });
 
         static::retrieved(function ($model) {
+    
             if (self::isAllowedCRUD('read') == false) {
                 return ;
             }
-            $activity = new ActivityLog([
-                'event' => 'read',
-                'user_id' => self::getUserId(),
-                'model' => get_class($model),
-                'model_id' => $model->id,
-                'old' => null,
-                'new' => null,
-                'ip' => self::getIp(),
-                'browser' => self::getBrowser(),
-                'browser_version' => self::getBrowserVersion(),
-                'referring_url' => self::getReferringURL(),
-                'current_url' => self::getCurrentURL(),
-                'device_type' => self::getDeviceType(),
-                'operating_system' => self::getOperatingSystem(),
-                'description' => null
-            ]);
-            $model->activities()->save($activity);
+            self::logActivity('read',$model);
         });
     }
 
-    public static function setRecord($event,$description = null ) {
+    private static function logActivity($event, $model = null, $oldValue = null, $newValue = null){
+        if (self::getEnabled() === false) {
+            return ;
+        }
+        if ($model !== null) {
+            $dataModel = get_class($model);
+            $dataModel_id = $model->id;
+        }else {
+            $dataModel = null;
+            $dataModel_id = null;
+        }
+        if ($oldValue !== null) {
+            $oldDataModel = json_encode($oldValue);
+        }else {
+            $oldDataModel = null;
+        }
+        if ($newValue !== null) {
+            $newDataModel = json_encode($newValue);
+        }else {
+            $newDataModel = null;
+        }
+
         $activity = new ActivityLog([
             'event' => $event,
             'user_id' => self::getUserId(),
-            'model' => null,
-            'model_id' => null,
-            'old' => null,
-            'new' => null,
+            'model' => $dataModel,
+            'model_id' => $dataModel_id,
+            'old' => $oldDataModel,
+            'new' => $newDataModel,
             'ip' => self::getIp(),
             'browser' => self::getBrowser(),
             'browser_version' => self::getBrowserVersion(),
@@ -381,12 +380,16 @@ trait ActivityLoggable
             'current_url' => self::getCurrentURL(),
             'device_type' => self::getDeviceType(),
             'operating_system' => self::getOperatingSystem(),
-            'description' => $description
+            'description' =>  self::$description
         ]);
         $activity->save();
-    } 
+        self::$description = null;
+        return $activity;
+    }
 
-    public function activities(){
-        return $this->hasMany(ActivityLog::class, 'model_id');
+   
+    public static function setRecord($event,$description = null){
+        self::setDescriptionForActivity($description);
+        self::logActivity($event,$model = null,$oldValue = null, $newValue = null);
     }
 }

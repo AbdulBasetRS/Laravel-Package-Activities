@@ -7,23 +7,6 @@ use Carbon\Carbon;
 
 trait ActivityLoggable
 {
-    
-    protected static $crud = [
-        'create' => true,
-        'read' => true,
-        'update' => true,
-        'delete'=> true ,
-    ];
-    
-    protected static $operation_info = [
-        'ip' => true,
-        'browser' => true,
-        'browser_version' => true,
-        'referring_url' => true ,
-        'current_url' => true ,
-        'device_type' => true ,
-        'operating_system'=> true 
-    ];
 
     protected static $exclude = [];
 
@@ -54,19 +37,9 @@ trait ActivityLoggable
         return $output;
     }
 
-    private static function isAllowed($args) {
-        if (in_array($args, self::$crud)) {
-            return self::$crud[$args];
-        }
-        return true;
-    }
-
     private static function isAllowedCRUD($arg) {
         if (config('ActivityConfig.crud_operation.'.$arg) == false) {
             return false;
-        }
-        if (array_key_exists($arg, self::$crud)) {
-            return self::$crud[$arg];
         }
         return true;
     }
@@ -74,9 +47,6 @@ trait ActivityLoggable
     private static function isAllowedOperationInfo($arg) {
         if (config('ActivityConfig.operation_info.'.$arg) == false) {
             return false;
-        }
-        if (array_key_exists($arg, self::$operation_info)) {
-            return self::$operation_info[$arg];
         }
         return true;
     }
@@ -384,6 +354,7 @@ trait ActivityLoggable
         ]);
         $activity->save();
         self::$description = null;
+        self::$exclude = [];
         return $activity;
     }
 

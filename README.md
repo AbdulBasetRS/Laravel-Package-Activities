@@ -53,25 +53,33 @@ class YourModel extends Model
 - when you publish the ActivityConfig you will have the config file in /config path and you can customize the package from array like...
 ```php
 return [
+    'activity_enabled' => env('ACTIVITY_ENABLED', true),
+    'table_name' => 'activities',
+    'submit_empty_logs' => true,
+    'log_only_changes' => true,
+    'delete_records_older_than_days' => 365,
     'crud_operation' => [
-        'create' => true,   // if false not record the action
-        'read' => true,     // if false not record the action
-        'update' => true,   // if false not record the action
-        'delete'=> true ,   // if false not record the action
+        'create' => true,
+        'read' => true,
+        'update' => true,
+        'delete'=> true ,
     ],
     'operation_info' => [
-        'ip' => true,               // if false return null
-        'browser' => true,          // if false return null
-        'browser_version' => true,  // if false return null
-        'referring_url' => true ,   // if false return null
-        'current_url' => true,      // if false return null
-        'device_type' => true,      // if false return null
-        'operating_system' => true  // if false return null
+        'ip' => true,
+        'browser' => true,
+        'browser_version' => true,
+        'referring_url' => true ,
+        'current_url' => true,
+        'device_type' => true,
+        'operating_system' => true
     ],
-    'exclude_column' => [ // write the exclude column for dont save in [old] and [new] column package, and if you exclude all the column will return null and will not save the action
+    'exclude_column' => [
         // 'created_at', 
-        // 'updated_at', 
-    ]
+        // 'updated_at' , 
+        // 'deleted_at',
+        // 'password',
+        // 'other',
+    ],
 ];
 ```
 - note for after modify the config file you must run the following command:
@@ -79,7 +87,14 @@ return [
 php artisan optimize
 ```
 
-## Screenshots
+## Screenshots For Examples
+
+- if you want set the Description for action, following the code under line.
+```php
+$model->setDescriptionForActivity('Description For create user');
+```
+- for example, following the image under line.
+![Screenshot 1](/media/setDescription.png)
 - if you want exclude the same coulmn from action in controller, following the code under line.
 ```php
 Model::setExclude(['created_at','updated_at']);

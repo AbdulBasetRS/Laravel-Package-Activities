@@ -3,7 +3,7 @@
     "description": "The Laravel Package Activities provides a simple and flexible way to log user activities in your Laravel application. With this package, you can track user actions such as creating, reading, updating, and deleting records.",
     "type": "library",
     "license": "MIT",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "authors": [
         {
             "name": "Abdulbaset R. Sayed",

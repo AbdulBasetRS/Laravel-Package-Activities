@@ -363,4 +363,12 @@ trait ActivityLoggable
         self::setDescriptionForActivity($description);
         self::logActivity($event,$model = null,$oldValue = null, $newValue = null);
     }
+
+    public static function setVisited($description = null){
+        if (config('ActivityConfig.visited') === false) {
+            return;
+        }
+        self::setDescriptionForActivity($description);
+        self::logActivity('visited');
+    }
 }

@@ -5,11 +5,12 @@ return [
     'submit_empty_logs' => true,
     'log_only_changes' => true,
     'delete_records_older_than_days' => 365,
+    'visited' => true,
     'crud_operation' => [
         'create' => true,
         'read' => true,
         'update' => true,
-        'delete'=> true ,
+        'delete'=> true,
     ],
     'operation_info' => [
         'ip' => true,

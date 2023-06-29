@@ -89,12 +89,24 @@ php artisan optimize
 
 ## Screenshots For Examples
 
+- if you want make event for set visited in controller, following the code under line.
+```php
+ActivityLoggable::setVisited();
+```
+OR
+```php
+$model->setVisited('write any description if you want or make it null');
+```
+- for example, following the image under line.
+![Screenshot 1](/media/setVisited.png)
+
 - if you want set the Description for action, following the code under line.
 ```php
 $model->setDescriptionForActivity('Description For create user');
 ```
 - for example, following the image under line.
 ![Screenshot 1](/media/setDescription.png)
+
 - if you want exclude the same coulmn from action in controller, following the code under line.
 ```php
 Model::setExclude(['created_at','updated_at']);

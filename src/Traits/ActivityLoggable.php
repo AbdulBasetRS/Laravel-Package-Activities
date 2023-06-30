@@ -261,7 +261,7 @@ trait ActivityLoggable
                     return ;
                 }
             }
-            self::logActivity('create',$model,$oldValue = null, $newValue = $new);
+            self::logActivity('create',$model,null,$new);
         });
 
         static::updated(function ($model) {
@@ -286,7 +286,7 @@ trait ActivityLoggable
                 }
             }
 
-            self::logActivity('update',$model,$oldValue = $old, $newValue = $new);
+            self::logActivity('update',$model,$old,$new);
 
         });
 
@@ -301,16 +301,29 @@ trait ActivityLoggable
                     return ;
                 }
             }
-            self::logActivity('delete',$model,$oldValue = $old, $new = null);
+            self::logActivity('delete',$model,$old);
 
         });
 
+        
+        static::restored(function ($model) {
+            if (self::isAllowedCRUD('restore') == false) {
+                return ;
+            }
+            $old = self::exclude(self::format($model->getOriginal(),$model->getDates()));
+            if ($old == null) {
+                if (self::submit_empty_logs() === false) {
+                    return ;
+                }
+            }
+            self::logActivity('restore',$model,$old);
+        });
+
         static::retrieved(function ($model) {
-    
             if (self::isAllowedCRUD('read') == false) {
                 return ;
             }
-            self::logActivity('read',$model);
+            // self::logActivity('read',$model);
         });
     }
 
@@ -360,15 +373,28 @@ trait ActivityLoggable
 
    
     public static function setRecord($event,$description = null){
+        if (config('ActivityConfig.record_method') === false) {
+            return;
+        }
         self::setDescriptionForActivity($description);
-        self::logActivity($event,$model = null,$oldValue = null, $newValue = null);
+        self::logActivity($event);
     }
 
     public static function setVisited($description = null){
-        if (config('ActivityConfig.visited') === false) {
+        if (config('ActivityConfig.visited_method') === false) {
             return;
         }
         self::setDescriptionForActivity($description);
         self::logActivity('visited');
     }
+
+
+    public static function setReadEvent($model, $description = null) {
+        if (config('ActivityConfig.read_method') === false) {
+            return;
+        }
+        self::setDescriptionForActivity($description);
+        self::logActivity('read', $model);
+    }
+
 }

@@ -89,6 +89,13 @@ php artisan optimize
 
 ## Screenshots For Examples
 
+- if you want make Read Event in controller, following the code under line.
+```php
+ActivityLoggable::setReadEvent($model);
+```
+- for example, following the image under line.
+![Screenshot 1](/media/setReadEvent.png)
+
 - if you want make event for set visited in controller, following the code under line.
 ```php
 ActivityLoggable::setVisited();
@@ -99,6 +106,17 @@ $model->setVisited('write any description if you want or make it null');
 ```
 - for example, following the image under line.
 ![Screenshot 1](/media/setVisited.png)
+
+- if you want save login records[ require ] and description[ option ], following the code under line.
+```php
+ActivityLoggable::setRecord('login','the description');
+```
+OR
+```php
+$model->setRecord('login','the description');
+```
+- for example, following the image under line.
+![Screenshot 1](/media/login.png)
 
 - if you want set the Description for action, following the code under line.
 ```php
@@ -117,17 +135,6 @@ $model->setExclude(['created_at','updated_at']);
 ```
 - for example, following the image under line.
 ![Screenshot 1](/media/exclude.png)
-
-- if you want save login records[ require ] and description[ option ], following the code under line.
-```php
-ActivityLoggable::setRecord('login','the description');
-```
-OR
-```php
-$model->setRecord('login','the description');
-```
-- for example, following the image under line.
-![Screenshot 1](/media/login.png)
 
 - if you want save logout records[ require ] and description[ option ], following the code under line.
 ```php

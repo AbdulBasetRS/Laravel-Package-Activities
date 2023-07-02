@@ -87,6 +87,10 @@ return [
 ```bash
 php artisan optimize
 ```
+- note for after modify the config file you must run the following command if you use the mcmara package:
+```bash
+php artisan route:trans:cache
+```
 
 ## Screenshots For Examples
 

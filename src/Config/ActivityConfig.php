@@ -20,7 +20,8 @@ return [
         'referring_url' => true ,
         'current_url' => true,
         'device_type' => true,
-        'operating_system' => true
+        'operating_system' => true,
+        'other_info' => true
     ],
     'exclude_column' => [
         // 'created_at', 

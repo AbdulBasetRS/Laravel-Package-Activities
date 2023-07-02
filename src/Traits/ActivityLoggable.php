@@ -30,11 +30,9 @@ trait ActivityLoggable
 
     protected static function getUserId(){
         if (auth()->check()) {
-            $output = auth()->id();
-        } else {
-            $output = null;
+            return auth()->id();
         }
-        return $output;
+        return null;
     }
 
     private static function isAllowedCRUD($arg) {
@@ -45,7 +43,7 @@ trait ActivityLoggable
     }
     
     private static function isAllowedOperationInfo($arg) {
-        if (config('ActivityConfig.operation_info.'.$arg) == false) {
+        if (config('ActivityConfig.operation_info.'.$arg) === false) {
             return false;
         }
         return true;
@@ -333,7 +331,11 @@ trait ActivityLoggable
         }
         if ($model !== null) {
             $dataModel = get_class($model);
-            $dataModel_id = $model->id;
+            if (isset($model->id)) {
+                $dataModel_id = (string)$model->id;
+            }else {
+                $dataModel_id = null;
+            }
         }else {
             $dataModel = null;
             $dataModel_id = null;
@@ -363,7 +365,8 @@ trait ActivityLoggable
             'current_url' => self::getCurrentURL(),
             'device_type' => self::getDeviceType(),
             'operating_system' => self::getOperatingSystem(),
-            'description' =>  self::$description
+            'description' =>  self::$description,
+            'other_info' => self::getOtherInfo()
         ]);
         $activity->save();
         self::$description = null;
@@ -371,7 +374,28 @@ trait ActivityLoggable
         return $activity;
     }
 
-   
+    private static function getOtherInfo(){
+        if (self::isAllowedOperationInfo('other_info') === false){
+            return null;
+        }
+        $methodName = [];
+        foreach (debug_backtrace() as $key => $value) {
+            if (($value['function'] === 'runController')) { // runController , dispatch, run
+                $methodName['advanced_info']['controller'][] = $value; 
+            }
+            if ( $value['function'] === 'dispatch') {
+                foreach ($value as $key2 => $value2) {
+                    if ($key2 === 'file') {
+                        if (strpos($value2,'HasEvents')) {
+                            $methodName['advanced_info']['event'][] = $value; 
+                        }
+                    }
+                }
+            }
+        }
+
+        return json_encode($methodName);
+    }
     public static function setRecord($event,$description = null){
         if (config('ActivityConfig.record_method') === false) {
             return;
@@ -389,12 +413,32 @@ trait ActivityLoggable
     }
 
 
-    public static function setReadEvent($model, $description = null) {
+    public static function setReadEvent($models, $description = null) {
         if (config('ActivityConfig.read_method') === false) {
             return;
         }
-        self::setDescriptionForActivity($description);
-        self::logActivity('read', $model);
+        
+        if (is_int($models)) {
+            self::setDescriptionForActivity($description);
+            self::logActivity('read:count');
+        } elseif ($models instanceof \Illuminate\Database\Eloquent\Builder) {
+            $models = $models->get();
+            foreach ($models as $model) {
+                self::setDescriptionForActivity($description);
+                self::logActivity('read', $model);
+            }
+        } elseif ($models instanceof \Illuminate\Database\Eloquent\Model) {
+            self::setDescriptionForActivity($description);
+            self::logActivity('read', $models);
+        } elseif ($models instanceof \Illuminate\Support\Collection) {
+            foreach ($models as $model) {
+                self::setDescriptionForActivity($description);
+                self::logActivity('read', $model);
+            }
+        } else {
+            self::setDescriptionForActivity($description);
+            self::logActivity('read');
+        }
     }
 
 }

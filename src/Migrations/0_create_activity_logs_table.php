@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create(config('ActivityConfig.table_name'), function (Blueprint $table) {
@@ -27,6 +24,7 @@ return new class extends Migration
             $table->string('device_type')->nullable();
             $table->string('operating_system')->nullable();
             $table->text('description')->nullable();
+            $table->json('other_info')->nullable();
             $table->timestamps();
         });
     }

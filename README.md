@@ -71,7 +71,8 @@ return [
         'referring_url' => true ,
         'current_url' => true,
         'device_type' => true,
-        'operating_system' => true
+        'operating_system' => true,
+        'other_info' => true
     ],
     'exclude_column' => [
         // 'created_at', 
@@ -146,6 +147,24 @@ $model->setRecord('logout');
 ```
 - for example, following the image under line.
 ![Screenshot 1](/media/logout.png)
+
+- here full example for methods [ setVisited, setRecord, setReadEvent ], following the code under line.
+```php
+ActivityLoggable::setVisited();
+ActivityLoggable::setVisited('view [ profile.index ]');
+ActivityLoggable::setRecord('login');
+ActivityLoggable::setRecord('login','success, login');
+ActivityLoggable::setRecord('logout');
+ActivityLoggable::setRecord('logout','success, logout');
+ActivityLoggable::setReadEvent(User::find([1,2],['id','email']));
+ActivityLoggable::setReadEvent(Project::all());
+ActivityLoggable::setReadEvent(User::where('id',1)->get());
+ActivityLoggable::setReadEvent(Project::count());
+ActivityLoggable::setReadEvent(Project::select('*'));
+ActivityLoggable::setReadEvent(auth()->user());
+```
+- for example, following the image under line.
+![Screenshot 1](/media/methods-example.png)
 
 ## Features
 - when use the package you will save the..

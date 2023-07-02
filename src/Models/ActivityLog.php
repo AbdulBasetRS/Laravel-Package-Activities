@@ -29,6 +29,7 @@ class ActivityLog extends Model
         'current_url',
         'device_type',
         'operating_system',
-        'description'
+        'description',
+        'other_info'
     ];
 }

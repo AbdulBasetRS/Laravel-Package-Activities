@@ -94,6 +94,20 @@ php artisan route:trans:cache
 
 ## Screenshots For Examples
 
+- if you want make login Event in controller at your login method, following the code under line.
+```php
+ActivityLoggable::setLogin($model);
+```
+- for example, following the image under line.
+![Screenshot 1](/media/setLogin.png)
+
+- if you want make logout Event in controller, following the code under line.
+```php
+ActivityLoggable::setLogout($model);
+```
+- for example, following the image under line.
+![Screenshot 1](/media/setLogout.png)
+
 - if you want make Read Event in controller, following the code under line.
 ```php
 ActivityLoggable::setReadEvent($model);

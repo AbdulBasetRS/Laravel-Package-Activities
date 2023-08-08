@@ -166,6 +166,8 @@ ActivityLoggable::setReadEvent(User::where('id',1)->get());
 ActivityLoggable::setReadEvent(Project::count());
 ActivityLoggable::setReadEvent(Project::select('*'));
 ActivityLoggable::setReadEvent(auth()->user());
+ActivityLoggable::setLogin(Auth::user());
+ActivityLoggable::setLogout(Auth::user());
 ```
 - for example, following the image under line.
 ![Screenshot 1](/media/methods-example.png)

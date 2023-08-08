@@ -325,7 +325,7 @@ trait ActivityLoggable
         });
     }
 
-    private static function logActivity($event, $model = null, $oldValue = null, $newValue = null){
+    private static function logActivity($event, $model = null, $oldValue = null, $newValue = null,$model_id = null){
         if (self::getEnabled() === false) {
             return ;
         }
@@ -335,6 +335,10 @@ trait ActivityLoggable
                 $dataModel_id = (string)$model->id;
             }else {
                 $dataModel_id = null;
+
+                if ($model_id !== null) {
+                    $dataModel_id = $model_id;
+                }
             }
         }else {
             $dataModel = null;
@@ -439,6 +443,23 @@ trait ActivityLoggable
             self::setDescriptionForActivity($description);
             self::logActivity('read');
         }
+    }
+
+
+    public static function setLogin($model = null, $description = null) {
+        if (config('ActivityConfig.login_method') === false) {
+            return;
+        }
+        self::setDescriptionForActivity($description);
+        self::logActivity('login',$model);
+    }
+
+    public static function setLogout($model, $description = null) {
+        if (config('ActivityConfig.logout_method') === false) {
+            return;
+        }
+        self::setDescriptionForActivity($description);
+        self::logActivity('logout',$model);
     }
 
 }

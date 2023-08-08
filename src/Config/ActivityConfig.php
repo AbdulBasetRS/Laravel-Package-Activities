@@ -7,6 +7,8 @@ return [
     'delete_records_older_than_days' => 365,
     'visited_method' => true,
     'record_method' => true,
+    'login_method' => true,
+    'logout_method' => true,
     'crud_operation' => [
         'create' => true,
         'update' => true,
